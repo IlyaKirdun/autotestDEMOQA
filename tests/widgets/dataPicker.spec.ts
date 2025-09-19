@@ -72,7 +72,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step('Проверяем выделение дня в календаре.', async () => {
-      await datePicker.verifyDayColor(day)
+      await datePicker.verifyDayStatus(day)
     })
 
     await test.step('Нажимаем клавишу "Ввод".', async () => {
@@ -126,7 +126,7 @@ test.describe('Проверка функциональности на стран
 
   test('CASE_4: Проверяем пагинацию дней месяца в "Select Date".', async () => {
     let initialMonth: string = ''
-    let currentMonth: string = ''
+    let currentMonth: string
 
     await test.step('Pre-condition', async () => {
       await test.step('Нажимаем на виджет "Date And Time".', async () => {
@@ -160,8 +160,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step(`Сравниваем текущий месяц с ${initialMonth}.`, async () => {
-      currentMonth = await datePicker.getCurrentMonthOrYearInSelectMenu('month')
-      await assertByState(initialMonth, currentMonth, 'notMatch')
+      await assertByState(initialMonth, await datePicker.getCurrentMonthOrYearInSelectMenu('month'), 'notMatch')
     })
   })
 
@@ -185,7 +184,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step('Проверяем корректное отображение месяца в селект меню "Month".', async () => {
-      await datePicker.verifyMonthOrYearInSelectMenu("month", `${numberMonth - 1}`)
+      await datePicker.verifyMonthOrYearInSelectMenu('month', `${numberMonth - 1}`)
     })
 
     await test.step(`Выбираем ${year} в выпадающем меню "Year".`, async () => {
@@ -193,7 +192,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step('Проверяем корректное отображение года в селект меню "Year".', async () => {
-      await datePicker.verifyMonthOrYearInSelectMenu("year", `${year}`)
+      await datePicker.verifyMonthOrYearInSelectMenu('year', `${year}`)
     })
 
     await test.step('Проверяем корректное отображение месяца и года в шапке пагинации.', async () => {
@@ -208,7 +207,7 @@ test.describe('Проверка функциональности на стран
       await datePicker.verifyDataPickerTabByState('datePickerMonthYear', 'toBeHidden')
     })
 
-    await test.step(`Сравниваем поле виджета "Select Date".`, async () => {
+    await test.step(`Сравниваем поле виджета "Select Date" c ${extendedDate}`, async () => {
       expect(extendedDate).toBe(await datePicker.selectDateInput.inputValue())
     })
   })
@@ -317,7 +316,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step(`Проверка изменения цвета ${day}.`, async () => {
-      await datePicker.verifyDayColor(day)
+      await datePicker.verifyDayStatus(day)
     })
 
     await test.step(`Сравниваем дату в поле виджета с ${currentDate}.`, async () => {
@@ -366,8 +365,8 @@ test.describe('Проверка функциональности на стран
       await datePicker.selectDayByNumber(day)
     })
 
-    await test.step(`Проверка изменения цвета ${day}.`, async () => {
-      await datePicker.verifyDayColor(day)
+    await test.step(`Проверка выбора ${day} в календаре.`, async () => {
+      await datePicker.verifyDayStatus(day)
     })
 
     await test.step(`Выбираем ${time} в списке времени.`, async () => {
@@ -387,7 +386,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step(`Проверка изменения цвета ${time}`, async () => {
-      await datePicker.verifyTimeColor(time)
+      await datePicker.verifyTimeStatus(time)
     })
   })
 
@@ -432,11 +431,11 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step(`Проверяем выделение ${day}.`, async () => {
-      await datePicker.verifyDayColor(day)
+      await datePicker.verifyDayStatus(day)
     })
 
     await test.step(`Проверяем выделение ${time}.`, async () => {
-      await datePicker.verifyTimeColor(time)
+      await datePicker.verifyTimeStatus(time)
     })
 
     await test.step('Нажимаем клавишу "Ввод".', async () => {
@@ -452,7 +451,7 @@ test.describe('Проверка функциональности на стран
     })
   })
 
-  test('CASE_12: Проверка функционала выпадающего меню года в "Date And Time".', async () => {
+  test('CASE_12: Проверка навигации в выпадающем меню "Год" в "Date And Time".', async () => {
     let year: string | null = ''
 
     await test.step('Pre-condition', async () => {

@@ -21,15 +21,12 @@ export default class DatePicker {
   }
 
   getCurrentDateForSelectDate() {
-    const date = new Date()
-
-    return date.toLocaleDateString("en-US", { year: 'numeric', month: '2-digit', day: '2-digit' })
+    return new Date().toLocaleDateString("en-US", { year: 'numeric', month: '2-digit', day: '2-digit' })
   }
 
   getCurrentDateForDateAndTime(){
-    const date = new Date()
-    const formatedDate = date.toLocaleString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
-    const formatedTime = date.toLocaleTimeString("en-US", {hour12: true, hour: "numeric", minute: "2-digit"})
+    const formatedDate: string = new Date().toLocaleString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })
+    const formatedTime: string = new Date().toLocaleTimeString("en-US", {hour12: true, hour: "numeric", minute: "2-digit"})
 
     return `${formatedDate} ${formatedTime}`
   }
@@ -46,7 +43,7 @@ export default class DatePicker {
     await expect(this.page.locator(`//select[contains(@class,"${menuName}")]`)).toHaveValue(valueMonthOrYear)
   }
 
-  async verifyMonthOrYearInDropdownMenu(menuName: 'month' | 'year', value: MonthList | number | string | null){
+  async verifyMonthOrYearInDropdownMenu(menuName: 'month' | 'year', value: string | number){
     expect(await this.page.locator(`//span[contains(@class, "selected-${menuName}")]`).innerText()).toBe(`${value}`)
   }
 
@@ -56,14 +53,14 @@ export default class DatePicker {
     await expect(tab)[state]()
   }
 
-  async verifyDayColor(dayNumber: number, color: string = this.colorMap.blue): Promise<void> {
+  async verifyDayStatus(dayNumber: number, color: string = this.colorMap.blue): Promise<void> {
     const day: Locator = this.page.locator(`//div[contains(@class, "day--selected")][text()="${dayNumber}"]`)
     const currentColor: string = await day.evaluate(el => getComputedStyle(el).backgroundColor)
 
     expect(currentColor).toBe(color)
   }
 
-  async verifyTimeColor(time: string, color: string = this.colorMap.blue): Promise<void> {
+  async verifyTimeStatus(time: string, color: string = this.colorMap.blue): Promise<void> {
     const element: Locator = this.page.locator(`//li[contains(text(),"${time}")]`)
     const currentColor: string = await element.evaluate(el => getComputedStyle(el).backgroundColor)
 
@@ -79,7 +76,7 @@ export default class DatePicker {
   }
 
   async clickNavigationYearDropdownMenuButtonByAction(action: 'next' | 'previous'): Promise<void> {
-    const nextOrPrevious = action == "next" ? 'first' : 'last'
+    const nextOrPrevious: 'first' | 'last' = action == "next" ? 'first' : 'last'
 
     await this.page.locator(`//div[contains(@class, "year-dropdown")]//div[contains(@class, "year-option")]`)[nextOrPrevious]().click()
   }
