@@ -23,7 +23,7 @@ export const defaultUserObject: { [key: string]: string } = {
     department: 'QA'
 }
 
-export interface NavigationBarStructure {[ key: string ]: string[]}
+export interface NavigationBarStructure { [ key: string ]: string[] }
 
 export type ElementsOnMainPage =
     | 'Elements'
@@ -33,7 +33,7 @@ export type ElementsOnMainPage =
     | 'Interactions'
     | 'Book Store Application'
 
-export type VisibilityState = 'toBeVisible'|'toBeHidden'
+export type VisibilityState = 'toBeVisible' | 'toBeHidden'
 
 export type ActionState = 'toBeEnabled' | 'toBeDisabled'
 
@@ -60,5 +60,22 @@ export type MonthList =
   | 'November'
   | 'December';
 
+export interface SelectDateTestData {
+  stringMonth: MonthList,
+  numberMonth: number,
+  day: number,
+  year: number,
+  customDate:  string,
+  extendedDate: string
+}
+
+export interface DateAndTimeTestData {
+  customDate: string,
+  expectedDate: string,
+  day: number,
+  month: MonthList,
+  year: number,
+  time: string
+}
 
 

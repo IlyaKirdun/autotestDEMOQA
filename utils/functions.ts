@@ -23,8 +23,8 @@ export async function removeAds(page: Page): Promise<void> {
 }
 
 export async function assertByState(
-    actual: string | number | null,
-    expected: string | number | null,
+    actual: string | number,
+    expected: string | number,
     state: 'match' | 'notMatch' = 'match'
 ): Promise<void> {
   // выбираем нужный expect: либо обычный, либо с .not
