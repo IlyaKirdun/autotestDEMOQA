@@ -1,5 +1,5 @@
 import {Page} from "@playwright/test"
-import {ElementsOnMainPage} from "../utils/types"
+import {ElementsOnMainPage} from "utils/types"
 
 export default class MainPage {
   page: Page
@@ -18,28 +18,31 @@ export default class MainPage {
   }
 
   async navigateToMainPage(): Promise<Page> {
-    const maxAttempts = 5
+    const maxAttempts: number = 5
+    const currentPage: Page = this.page
 
-    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    for (let attempt: number = 0; attempt < maxAttempts; attempt += 1) {
       try {
-        // Первая попытка на текущей странице
-        if (await this.attemptNavigate(this.page, '/')) {
-          return this.page
-        }
+        // Попытка навигации на текущей странице
+        await this.attemptNavigate(currentPage, '/')
+        return currentPage
+      } catch (primaryError) {
+        console.error(`${attempt + 1} попытка с основной страницей не удалась:`, primaryError)
 
-        // Вторая попытка на новой странице
-        const newPage = await this.page.context().newPage()
         try {
-          if (await this.attemptNavigate(newPage, '/')) {
-            await this.page.close()
+          // Попытка навигации с новой страницей
+          const newPage: Page = await this.page.context().newPage()
+          try {
+            await this.attemptNavigate(newPage, '/')
+            await currentPage.close()
             this.page = newPage
-            return this.page
+            return newPage
+          } finally {
+            await newPage.close()
           }
-        } finally {
-          await newPage.close()
+        } catch (fallbackError) {
+          console.error(`${attempt + 1} попытка с новой страницей не удалась:`, fallbackError)
         }
-      } catch (error) {
-        console.error(`Попытка ${attempt + 1} завершилась ошибкой:`, error)
       }
     }
 

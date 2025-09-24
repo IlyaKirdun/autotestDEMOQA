@@ -1,9 +1,9 @@
-import {expect, test} from "@playwright/test"
-import MainPage from "../../page/main.page"
-import DatePicker from "../../utils/components/dataPicker.page";
-import {assertByState, removeAds} from "../../utils/functions";
-import NavigationBar from "../../utils/components/navigationBar";
-import {DateAndTimeTestData, SelectDateTestData} from "../../utils/types";
+import {expect, Page, test} from "@playwright/test"
+import MainPage from "page/main.page"
+import DatePicker from "utils/components/dataPicker.page";
+import {assertByState, removeAds} from "utils/functions";
+import NavigationBar from "utils/components/navigationBar";
+import {DateAndTimeTestData, SelectDateTestData} from "utils/types";
 
 test.describe('Проверка функциональности на странице "Date Picker', () => {
   let mainPage: MainPage
@@ -30,16 +30,27 @@ test.describe('Проверка функциональности на стран
   test.beforeEach(async ({page}) => {
     mainPage = new MainPage(page)
 
-    const newPage = await mainPage.navigateToMainPage()
+    const newPage: Page = await mainPage.navigateToMainPage()
     if (newPage !== page) { page = newPage }
 
     navigationBar = new NavigationBar(page)
     datePicker = new DatePicker(page)
 
-    await removeAds(page)
-    await mainPage.clickOnElement('Widgets')
-    await navigationBar.clickElementInNavigationBar('Date Picker')
-    await removeAds(page)
+    await test.step('Удаляем рекламу на главной странице', async () => {
+      await removeAds(page)
+    })
+
+    await test.step('Нажимаем кнопку "Widgets"', async () => {
+      await mainPage.clickOnElement('Widgets')
+    })
+
+    await test.step('Нажимаем кнопку "Date Picker"', async () => {
+      await navigationBar.clickElementInNavigationBar('Date Picker')
+    })
+
+    await test.step('Удаляем рекламу на странице "Date Picker"', async () => {
+      await removeAds(page)
+    })
   })
 
   test('CASE_1: Проверка даты из поля виджета Select date.', async () => {
@@ -49,16 +60,18 @@ test.describe('Проверка функциональности на стран
   })
 
   test('CASE_2: Проверяем функционал ручного ввода даты в "Select Date".', async () => {
-    await test.step('Нажимаем на виджет "Select Date".', async () => {
-      await datePicker.selectDateInput.click()
-    })
+    await test.step('Pre-conditions', async () => {
+      await test.step('Нажимаем на виджет "Select Date".', async () => {
+        await datePicker.selectDateInput.click()
+      })
 
-    await test.step('Проверяем что модальное окно открылось.', async () => {
-      await datePicker.verifyDataPickerTabByState('datePickerMonthYear', 'toBeVisible')
-    })
+      await test.step('Проверяем что модальное окно открылось.', async () => {
+        await datePicker.verifyDataPickerTabByState('datePickerMonthYear', 'toBeVisible')
+      })
 
-    await test.step('Очищаем поле ввода.', async () => {
-      await datePicker.selectDateInput.fill('')
+      await test.step('Очищаем поле ввода.', async () => {
+        await datePicker.selectDateInput.fill('')
+      })
     })
 
     await test.step(`Вводим дату из ${selectDateTestData.customDate}`, async () => {
@@ -171,12 +184,14 @@ test.describe('Проверка функциональности на стран
   })
 
   test('CASE_5: Проверяем выбор полной даты в "Select Date".', async () => {
-    await test.step('Нажимаем на виджет "Select date".', async () => {
-      await datePicker.selectDateInput.click()
-    })
+    await test.step('Pre-conditions', async () => {
+      await test.step('Нажимаем на виджет "Select date".', async () => {
+        await datePicker.selectDateInput.click()
+      })
 
-    await test.step('Проверяем что модальное окно открылось.', async () => {
-      await datePicker.verifyDataPickerTabByState('datePickerMonthYear', 'toBeVisible')
+      await test.step('Проверяем что модальное окно открылось.', async () => {
+        await datePicker.verifyDataPickerTabByState('datePickerMonthYear', 'toBeVisible')
+      })
     })
 
     await test.step(`Выбираем ${selectDateTestData.stringMonth} в выпадающем меню "Month".`, async () => {
@@ -323,12 +338,14 @@ test.describe('Проверка функциональности на стран
   })
 
   test('CASE_10: Проверка функционала выбора даты виджета "Data And Time".', async () => {
-    await test.step('Нажимаем на виджет "Date And Time".', async () => {
-      await datePicker.dateAndTimeInput.click()
-    })
+    await test.step('Pre-conditions', async () => {
+      await test.step('Нажимаем на виджет "Date And Time".', async () => {
+        await datePicker.dateAndTimeInput.click()
+      })
 
-    await test.step('Проверяем что модальное окно открылось.', async () => {
-      await datePicker.verifyDataPickerTabByState('dateAndTimePicker', 'toBeVisible')
+      await test.step('Проверяем что модальное окно открылось.', async () => {
+        await datePicker.verifyDataPickerTabByState('dateAndTimePicker', 'toBeVisible')
+      })
     })
 
     await test.step(`Выбираем ${dateAndTimeTestData.month} в выпадающем меню "Month".`, async () => {
@@ -381,16 +398,18 @@ test.describe('Проверка функциональности на стран
   })
 
   test('CASE_11: Проверка ручного ввода даты виджета "Date And Time".', async () => {
-    await test.step('Нажимаем на виджет "Date And Time".', async () => {
-      await datePicker.dateAndTimeInput.click()
-    })
+    await test.step('Pre-conditions', async () => {
+      await test.step('Нажимаем на виджет "Date And Time".', async () => {
+        await datePicker.dateAndTimeInput.click()
+      })
 
-    await test.step('Проверяем что модальное окно открылось.', async () => {
-      await datePicker.verifyDataPickerTabByState('dateAndTimePicker', 'toBeVisible')
-    })
+      await test.step('Проверяем что модальное окно открылось.', async () => {
+        await datePicker.verifyDataPickerTabByState('dateAndTimePicker', 'toBeVisible')
+      })
 
-    await test.step('Очищаем поле ввода.', async () => {
-      await datePicker.dateAndTimeInput.fill('')
+      await test.step('Очищаем поле ввода.', async () => {
+        await datePicker.dateAndTimeInput.fill('')
+      })
     })
 
     await test.step(`Вводим дату из ${dateAndTimeTestData.customDate}`, async () => {
