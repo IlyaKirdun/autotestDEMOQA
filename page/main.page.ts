@@ -8,47 +8,43 @@ export default class MainPage {
     this.page = page
   }
 
-  private async attemptNavigate(page: Page, url: string): Promise<void> {
-    const response = await page.goto(url, { waitUntil: 'domcontentloaded' })
+  private async navigateToPageByUrl(page: Page, url: string): Promise<void> {
+    const response = await page.goto(url, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000
+    })
 
-    if (!response || this.isErrorCode(response.status())) {
-      throw new Error(`Ошибка навигации: статус ${response?.status() || 'null'}`);
+    if (response === null || !response.ok()) {
+      throw new Error(`Ошибка навигации: статус ${response?.status() || 'null'}`)
     }
-    // return response !== null && !this.isErrorCode(response.status())
   }
 
-  private isErrorCode(statusCode: number): boolean {
-    return [500, 502].includes(statusCode)
-  }
-
-  async navigateToMainPage(): Promise<Page> {
+  async navigateToMainPage(url: string = '/'): Promise<Page> {
     const maxAttempts: number = 5
     const currentPage: Page = this.page
 
-    for (let attempt: number = 0; attempt < maxAttempts; attempt += 1) {
+    for (let attempt: number = 1; attempt <= maxAttempts; attempt += 1) {
       try {
-        // Попытка навигации на текущей странице
-        await this.attemptNavigate(currentPage, '/')
+        await this.navigateToPageByUrl(currentPage, url)
         return currentPage
-      } catch (primaryError) {
-        console.error(`${attempt + 1} попытка с основной страницей не удалась:`, primaryError)
+      } catch (error) {
+        console.error(`Попытка ${attempt} не удалась:`, error)
 
-        // Попытка навигации с новой страницей
+        // Создаем новую страницу для следующей попытки
         const newPage: Page = await this.page.context().newPage()
 
         try {
-          await this.attemptNavigate(newPage, '/')
+          await this.navigateToPageByUrl(newPage, url)
           await currentPage.close()
           this.page = newPage
           return this.page
-        } catch (error) {
-          console.error(`${attempt + 1} попытка с новой страницей не удалась:`, error)
+        } catch {
           await newPage.close()
         }
       }
     }
 
-    throw new Error('Не удалось загрузить страницу после 5 попыток.')
+    throw new Error(`Не удалось загрузить страницу после ${maxAttempts} попыток`)
   }
 
   async clickOnElement(elementName: ElementsOnMainPage): Promise<void> {
