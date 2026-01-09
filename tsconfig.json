@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // Базовый URL для поиска модулей
+    "paths": {
+      "tests/*": ["./tests/*"], // Импорты из "tests/" будут разрешаться из папки "./tests/"
+      "page/*": ["./page/*"],
+      "utils/*": ["./utils/*"],
+    },
     "target": "es2016",
     "module": "commonjs",
     "esModuleInterop": true,
@@ -10,13 +16,13 @@
     "strictFunctionTypes": true
   },
   "include": [
-    "tests//*.ts",
-    "Utils//*.ts",
-    "pageObjects/**/*.ts"
+    "tests/**/*.ts",
+    "utils/**/*.ts",
+    "page/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "test-results",
     "playwright.config.ts"
-  ]
+  ],
 }

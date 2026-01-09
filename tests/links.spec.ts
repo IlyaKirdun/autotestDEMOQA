@@ -1,4 +1,4 @@
-import {test} from "@playwright/test";
+import {test, Page} from "@playwright/test";
 import MainPage from "../page/main.page";
 import NavigationBar from "../utils/components/navigationBar";
 import LinksPage from "../page/links.page";
@@ -6,6 +6,7 @@ import {assertByState, removeAds} from "../utils/functions";
 import {locatorLinkNames} from "../utils/types";
 
 test.describe('Проверка функциональности на странице "Links', () => {
+    let updatedPage: Page
     let mainPage: MainPage
     let navigationBar: NavigationBar
     let linksPage: LinksPage
@@ -16,6 +17,7 @@ test.describe('Проверка функциональности на стран
         const newPage = await mainPage.navigateToMainPage()
         if (newPage !== page) { page = newPage }
 
+        updatedPage = page
         navigationBar = new NavigationBar(page)
         linksPage = new LinksPage(page, context)
 
@@ -31,7 +33,7 @@ test.describe('Проверка функциональности на стран
         })
     })
 
-    test('CASE_2: Проверяем функционал динамической ссылки "Home".', async ( { page }) => {
+    test('CASE_2: Проверяем функционал динамической ссылки "Home".', async () => {
         let initialDynamicLink = ''
         let actualDynamicLink = ''
 
@@ -40,7 +42,7 @@ test.describe('Проверка функциональности на стран
         })
 
         await test.step('Обновляем страницу.', async () => {
-            await page.reload()
+            await updatedPage.reload()
         })
 
         await test.step(`Сохраняем значение динамической ссылки "Home" в ${actualDynamicLink}.`, async () => {

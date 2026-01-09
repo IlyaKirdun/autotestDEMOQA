@@ -1,10 +1,11 @@
-import {test} from "@playwright/test";
+import {test, Page} from "@playwright/test";
 import MainPage from "../page/main.page";
 import NavigationBar from "../utils/components/navigationBar";
 import ButtonPage from "../page/button.page";
 import {assertByState, removeAds} from "../utils/functions";
 
 test.describe('Проверка функциональности на странице "Web Tables', () => {
+  let updatedPage: Page
   let mainPage: MainPage
   let navigationBar: NavigationBar
   let buttonPage: ButtonPage
@@ -15,6 +16,7 @@ test.describe('Проверка функциональности на стран
     const newPage = await mainPage.navigateToMainPage()
     if (newPage !== page) { page = newPage }
 
+    updatedPage = page
     buttonPage = new ButtonPage(page)
     navigationBar = new NavigationBar(page)
 
@@ -44,7 +46,7 @@ test.describe('Проверка функциональности на стран
     })
   })
 
-  test('CASE_3: Проверка функционала кнопки "Click Me".', async ({ page }) => {
+  test('CASE_3: Проверка функционала кнопки "Click Me".', async () => {
     let initialButtonId: string = ''
     let actualButtonId: string = ''
 
@@ -53,7 +55,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step('Обновляем страницу', async () => {
-      await page.reload()
+      await updatedPage.reload()
     })
 
     await test.step('Сравниваем значение аргумента "id" у кнопки "Click Me" с сохранённым.', async () => {

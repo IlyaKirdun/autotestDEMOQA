@@ -1,10 +1,11 @@
-import {expect, test} from "@playwright/test"
+import {expect,Page, test} from "@playwright/test"
 import MainPage from "../page/main.page"
 import NavigationBar from "../utils/components/navigationBar"
 import DynamicProperties from "../page/dynamicProperties.page"
-import {removeAds} from "../utils/functions";
+import {removeAds} from "../utils/functions"
 
 test.describe('Проверка функциональности на странице "Dynamic Properties"', () => {
+  let updatedPage: Page
   let mainPage: MainPage
   let navigationBar: NavigationBar
   let dynamicProperties: DynamicProperties
@@ -15,6 +16,7 @@ test.describe('Проверка функциональности на стран
     const newPage = await mainPage.navigateToMainPage()
     if (newPage !== page) { page = newPage }
 
+    updatedPage = page
     navigationBar = new NavigationBar(page)
     dynamicProperties = new DynamicProperties(page)
 
@@ -24,7 +26,7 @@ test.describe('Проверка функциональности на стран
     await removeAds(page)
   })
 
-  test('CASE_1: Проверяем текст с изменяемым ID', async ({page}) => {
+  test('CASE_1: Проверяем текст с изменяемым ID', async () => {
     let initialTextId: string | null = ''
 
     await test.step(`Сохраняем ID текста в ${initialTextId}.`, async () => {
@@ -32,7 +34,7 @@ test.describe('Проверка функциональности на стран
     })
 
     await test.step('Обновляем страницу.', async () => {
-      await page.reload()
+      await updatedPage.reload()
     })
 
     await test.step(`Получаем ID и сравниваем с ${initialTextId}.`, async () => {

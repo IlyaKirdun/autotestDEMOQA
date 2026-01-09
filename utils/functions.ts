@@ -10,7 +10,7 @@ export async function removeAds(page: Page): Promise<void> {
     '//section[@id="RightSide_Advertisement"]'
   ]
 
-  await page.waitForLoadState('load')
+  await page.waitForLoadState('domcontentloaded')
   await new Promise(resolve => setTimeout(resolve, 1000))
 
   for (const ads of extendAds) {
